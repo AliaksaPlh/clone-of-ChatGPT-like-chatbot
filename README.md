@@ -16,7 +16,8 @@ ChatGPT-like demo application.
 
 - **Postgres / Supabase** — data lives in a **process in-memory** store (`src/lib/chat-store/`) - resets when the dev server restarts.
 - **Supabase Auth / Clerk** — no OAuth or email login yet.
-- **External LLM** (OpenAI or Gemini)
+- **OpenAI** — optional: set `OPENAI_API_KEY` to use the [Responses API](https://developers.openai.com/api/docs/quickstart) for real replies; without it, the app uses an offline mock stream.
+- **Other LLM providers** (e.g. Gemini) — not wired in this repo
 - **Supabase Realtime / Socket.io** — not used, cross-tab behaviour is browser-only.
 
 ## Stack (as in this repo)
@@ -38,6 +39,11 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+Optional `.env.local`:
+
+- `OPENAI_API_KEY` — required for live model output
+- `OPENAI_MODEL`
 
 ## Scripts
 

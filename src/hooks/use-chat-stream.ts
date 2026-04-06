@@ -114,6 +114,14 @@ export const useChatStream = () => {
             return;
           }
 
+          if (payload.type === "error") {
+            throw new Error(
+              typeof payload.error === "string"
+                ? payload.error
+                : "Stream failed.",
+            );
+          }
+
           if (payload.type === "done") {
             state.chatId = payload.chatId as string;
             state.assistantMessage = payload.assistantMessage as ChatMessage;

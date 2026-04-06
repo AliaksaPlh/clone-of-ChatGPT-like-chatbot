@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Curl snippets, not JavaScript
+    "src/llm/aploadfile.mjs",
   ]),
 ]);
 

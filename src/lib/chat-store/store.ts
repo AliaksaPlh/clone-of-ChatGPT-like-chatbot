@@ -1,6 +1,7 @@
 import { FREE_PROMPT_LIMIT } from "@/lib/chat-store/constants";
 import { createId, formatRelativeTime, nowIso } from "@/lib/chat-store/id-time";
 import { ensureStore } from "@/lib/chat-store/memory";
+import { isAuthChatSessionId } from "@/lib/chat-store/session-key";
 import { buildTitleFromContent } from "@/lib/chat-store/title";
 import {
   type ChatAttachment,
@@ -15,6 +16,16 @@ export const chatStore = {
   getSession(sessionId: string): UserSession {
     const store = ensureStore(sessionId);
     const session = store.sessions.get(sessionId) ?? { usedFreePrompts: 0 };
+
+    if (isAuthChatSessionId(sessionId)) {
+      return {
+        id: sessionId,
+        isAnonymous: false,
+        usedFreePrompts: session.usedFreePrompts,
+        remainingFreePrompts: 1_000_000,
+      };
+    }
+
     const remainingFreePrompts = Math.max(
       0,
       FREE_PROMPT_LIMIT - session.usedFreePrompts,
@@ -95,6 +106,10 @@ export const chatStore = {
   },
 
   canSendPrompt(sessionId: string) {
+    if (isAuthChatSessionId(sessionId)) {
+      return true;
+    }
+
     const session = chatStore.getSession(sessionId);
 
     return session.remainingFreePrompts > 0;
@@ -135,10 +150,12 @@ export const chatStore = {
       store.chatsBySession.set(sessionId, chats);
     }
 
-    const session = store.sessions.get(sessionId) ?? { usedFreePrompts: 0 };
-    store.sessions.set(sessionId, {
-      usedFreePrompts: session.usedFreePrompts + 1,
-    });
+    if (!isAuthChatSessionId(sessionId)) {
+      const session = store.sessions.get(sessionId) ?? { usedFreePrompts: 0 };
+      store.sessions.set(sessionId, {
+        usedFreePrompts: session.usedFreePrompts + 1,
+      });
+    }
 
     return message;
   },

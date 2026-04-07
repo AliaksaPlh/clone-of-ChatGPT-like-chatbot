@@ -29,6 +29,9 @@ const messageToUserContent = (message: ChatMessage) => {
   return `${base || "(no text)"}${attachmentBlock}`;
 };
 
+/**
+ * map saved chat messages to the Responses API `input` list chronological
+ */
 export const buildResponseInputFromMessages = (
   messages: Array<ChatMessage>,
 ): ResponseInput => {

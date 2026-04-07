@@ -8,13 +8,7 @@ import {
   useState,
 } from "react";
 
-import {
-  ArrowUp,
-  FileText,
-  ImagePlus,
-  Mic,
-  Paperclip,
-} from "lucide-react";
+import { ArrowUp, FileText, ImagePlus, Mic, Paperclip } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +16,8 @@ type ChatInputProps = {
   chatId?: string;
   isStreaming: boolean;
   isUploading?: boolean;
+  /** if true the limit omitted */
+  isUnlimitedPrompts?: boolean;
   remainingFreePrompts: number;
   onUploadFiles: (files: Array<File>) => Promise<void>;
   onSendMessage: (content: string) => Promise<void>;
@@ -31,6 +27,7 @@ export const ChatInput = ({
   chatId,
   isStreaming,
   isUploading = false,
+  isUnlimitedPrompts = false,
   remainingFreePrompts,
   onUploadFiles,
   onSendMessage,
@@ -39,7 +36,10 @@ export const ChatInput = ({
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const documentInputRef = useRef<HTMLInputElement | null>(null);
 
-  const isDisabled = isStreaming || isUploading || remainingFreePrompts <= 0;
+  const isDisabled =
+    isStreaming ||
+    isUploading ||
+    (!isUnlimitedPrompts && remainingFreePrompts <= 0);
 
   const handleUpload = async (files: Array<File>) => {
     if (!chatId || !files.length) {
@@ -171,9 +171,11 @@ export const ChatInput = ({
       </div>
 
       <p className="px-1 text-center text-xs leading-5 text-zinc-400">
-        {remainingFreePrompts > 0
-          ? `${remainingFreePrompts} anonymous prompts remaining in this session.`
-          : "Anonymous limit reached. Connect auth to continue in the next step."}{" "}
+        {isUnlimitedPrompts
+          ? "Signed in — no prompt limit for this app session."
+          : remainingFreePrompts > 0
+            ? `${remainingFreePrompts} anonymous prompts remaining in this session.`
+            : "Anonymous limit reached. Sign in via the sidebar to continue."}{" "}
         Paste an image or upload a document to include it in context.
       </p>
     </div>

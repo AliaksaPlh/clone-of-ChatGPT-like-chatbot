@@ -1,30 +1,37 @@
 import { NextResponse } from "next/server";
 
 import { chatStore } from "@/lib/chat-store";
-import { applySessionCookie, getOrCreateSessionId } from "@/lib/server-session";
+import {
+  applyAnonSessionCookieIfNeeded,
+  resolveChatSession,
+} from "@/lib/resolve-chat-session";
 
 export const GET = async () => {
-  const { sessionId, shouldSetCookie } = await getOrCreateSessionId();
+  const { sessionId, shouldSetAnonCookie } = await resolveChatSession();
   const response = NextResponse.json({
     data: chatStore.getChats(sessionId),
   });
 
-  if (shouldSetCookie) {
-    await applySessionCookie(response, sessionId);
-  }
+  await applyAnonSessionCookieIfNeeded(
+    response,
+    sessionId,
+    shouldSetAnonCookie,
+  );
 
   return response;
 };
 
 export const POST = async () => {
-  const { sessionId, shouldSetCookie } = await getOrCreateSessionId();
+  const { sessionId, shouldSetAnonCookie } = await resolveChatSession();
   const response = NextResponse.json({
     data: chatStore.createChat(sessionId),
   });
 
-  if (shouldSetCookie) {
-    await applySessionCookie(response, sessionId);
-  }
+  await applyAnonSessionCookieIfNeeded(
+    response,
+    sessionId,
+    shouldSetAnonCookie,
+  );
 
   return response;
 };

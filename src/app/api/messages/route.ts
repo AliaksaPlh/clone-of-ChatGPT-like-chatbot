@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { chatStore } from "@/lib/chat-store";
-import { applySessionCookie, getOrCreateSessionId } from "@/lib/server-session";
+import {
+  applyAnonSessionCookieIfNeeded,
+  resolveChatSession,
+} from "@/lib/resolve-chat-session";
 
 export const GET = async (request: Request) => {
-  const { sessionId, shouldSetCookie } = await getOrCreateSessionId();
+  const { sessionId, shouldSetAnonCookie } = await resolveChatSession();
   const { searchParams } = new URL(request.url);
   const chatId = searchParams.get("chatId");
 
@@ -21,9 +24,11 @@ export const GET = async (request: Request) => {
     data: chatStore.getMessages(sessionId, chatId),
   });
 
-  if (shouldSetCookie) {
-    await applySessionCookie(response, sessionId);
-  }
+  await applyAnonSessionCookieIfNeeded(
+    response,
+    sessionId,
+    shouldSetAnonCookie,
+  );
 
   return response;
 };

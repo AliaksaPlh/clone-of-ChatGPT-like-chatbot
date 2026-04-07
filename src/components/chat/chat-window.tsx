@@ -86,6 +86,7 @@ export const ChatWindow = ({
           <ChatInput
             chatId={currentChat?.id}
             isStreaming={isStreaming}
+            isUnlimitedPrompts={Boolean(session && !session.isAnonymous)}
             isUploading={isUploading}
             onUploadFiles={onUploadFiles}
             onSendMessage={onSendMessage}

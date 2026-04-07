@@ -15,7 +15,7 @@ ChatGPT-like demo application.
 ## Not implemented yet (coming soon)
 
 - **Postgres / Supabase** — data lives in a **process in-memory** store (`src/lib/chat-store/`) - resets when the dev server restarts.
-- **Supabase Auth / Clerk** — no OAuth or email login yet.
+- **Supabase Auth (email/password)** — optional: `/login` + sidebar when `NEXT_PUBLIC_SUPABASE_*` is set. When signed in, API routes use your Supabase user id as the in-memory chat partition (`auth:<userId>`) and **no 3-prompt limit**; data is still not persisted to Postgres.
 - **OpenAI** — optional: set `OPENAI_API_KEY` to use the [Responses API](https://developers.openai.com/api/docs/quickstart) for real replies; without it, the app uses an offline mock stream.
 - **Other LLM providers** (e.g. Gemini) — not wired in this repo
 - **Supabase Realtime / Socket.io** — not used, cross-tab behaviour is browser-only.
@@ -28,7 +28,7 @@ ChatGPT-like demo application.
 | Tailwind                        | Yes                                 |
 | REST API (App Router)           | Yes                                 |
 | Postgres via Supabase           | **No** (in-memory)                  |
-| Auth via Supabase/Clerk         | **No**                              |
+| Auth via Supabase (email)       | **Partial** (`/login`, middleware)  |
 | Realtime via Supabase/Socket.io | **No** (BroadcastChannel + storage) |
 
 ## Run locally
@@ -42,8 +42,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Optional `.env.local`:
 
-- `OPENAI_API_KEY` — required for live model output
-- `OPENAI_MODEL`
+- `OPENAI_API_KEY` — live model output
+- `OPENAI_MODEL` — overrides default `gpt-4o-mini`
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` — enable `/login` and session cookies
 
 ## Scripts
 

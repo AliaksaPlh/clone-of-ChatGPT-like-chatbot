@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { chatStore } from "@/lib/chat-store";
-import { applySessionCookie, getOrCreateSessionId } from "@/lib/server-session";
+import {
+  applyAnonSessionCookieIfNeeded,
+  resolveChatSession,
+} from "@/lib/resolve-chat-session";
 import { buildResponseInputFromMessages } from "@/llm/build-response-input";
 import { getOpenAIModel } from "@/llm/config";
 import { createOpenAIClient, isOpenAIConfigured } from "@/llm/openai-client";
@@ -80,7 +83,7 @@ export const POST = async (request: Request) => {
     );
   }
 
-  const { sessionId, shouldSetCookie } = await getOrCreateSessionId();
+  const { sessionId, shouldSetAnonCookie } = await resolveChatSession();
 
   if (!chatStore.canSendPrompt(sessionId)) {
     return NextResponse.json(
@@ -211,9 +214,11 @@ export const POST = async (request: Request) => {
     },
   });
 
-  if (shouldSetCookie) {
-    await applySessionCookie(response, sessionId);
-  }
+  await applyAnonSessionCookieIfNeeded(
+    response,
+    sessionId,
+    shouldSetAnonCookie,
+  );
 
   return response;
 };

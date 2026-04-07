@@ -1,9 +1,9 @@
 "use client";
 
-import { Lock, MessageSquarePlus, Search, Sparkles } from "lucide-react";
+import { MessageSquarePlus, Search, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { InfoBanner } from "@/components/ui/info-banner";
+import { AuthSessionBlock } from "@/components/login/auth-session-block";
 import { type ChatThread } from "@/types/chat";
 import { type UserSession } from "@/types/chat";
 
@@ -71,24 +71,7 @@ export const ChatSidebar = ({
       </div>
 
       <div className="border-t border-white/10 p-4">
-        <InfoBanner
-          action={
-            <Button className="w-full rounded-xl" variant="dark">
-              Log in to continue
-            </Button>
-          }
-          className="border-amber-400/20 bg-amber-400/10 text-amber-100"
-          description={
-            <span className="text-amber-50/70">
-              {session
-                ? `${session.usedFreePrompts} of 3 free prompts used.`
-                : "3 free prompts available."}{" "}
-              Sign in to save chats, upload files and sync across tabs.
-            </span>
-          }
-          icon={<Lock className="size-4" />}
-          title="Anonymous access"
-        />
+        <AuthSessionBlock session={session} />
       </div>
     </aside>
   );

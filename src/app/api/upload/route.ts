@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { chatStore } from "@/lib/chat-store";
-import { applySessionCookie, getOrCreateSessionId } from "@/lib/server-session";
+import {
+  applyAnonSessionCookieIfNeeded,
+  resolveChatSession,
+} from "@/lib/resolve-chat-session";
 import { type ChatAttachmentType } from "@/types/chat";
 
 const formatFileSize = (size: number) => {
@@ -27,7 +30,7 @@ const extractTextPreview = async (file: File) => {
 };
 
 export const POST = async (request: Request) => {
-  const { sessionId, shouldSetCookie } = await getOrCreateSessionId();
+  const { sessionId, shouldSetAnonCookie } = await resolveChatSession();
   const formData = await request.formData();
   const requestedChatId = formData.get("chatId");
   const files = formData.getAll("files");
@@ -70,9 +73,11 @@ export const POST = async (request: Request) => {
     },
   });
 
-  if (shouldSetCookie) {
-    await applySessionCookie(response, sessionId);
-  }
+  await applyAnonSessionCookieIfNeeded(
+    response,
+    sessionId,
+    shouldSetAnonCookie,
+  );
 
   return response;
 };

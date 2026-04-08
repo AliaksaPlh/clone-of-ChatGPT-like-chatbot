@@ -59,14 +59,8 @@ export const ChatWindow = ({
                   live
                 </Pill>
               </div>
-              <p className="text-xs text-zinc-500">
-                {session?.isAnonymous
-                  ? "Anonymous mode with prompt limits"
-                  : "Signed-in collaborative workspace"}
-              </p>
             </div>
           </div>
-
         </div>
       </header>
 

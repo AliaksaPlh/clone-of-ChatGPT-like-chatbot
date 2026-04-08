@@ -119,10 +119,17 @@ export const AppShell = () => {
       return;
     }
 
-    await uploadFilesMutation.mutateAsync({
-      chatId: currentChat.id,
+    const previousChatId = currentChat.id;
+    const result = await uploadFilesMutation.mutateAsync({
+      chatId: previousChatId,
       files,
     });
+
+    const resolvedChatId = result.data.chatId;
+
+    if (resolvedChatId && resolvedChatId !== previousChatId) {
+      setActiveChatId(resolvedChatId);
+    }
   };
 
   return (

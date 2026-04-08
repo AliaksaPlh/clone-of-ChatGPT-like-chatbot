@@ -31,9 +31,7 @@ export const resolveChatSession = async (): Promise<ResolvedChatSession> => {
       };
     }
   } catch {
-    console.log(
-      "Failed to get user from Supabase, falling back to anonymous session",
-    );
+    // Supabase not configured or cookie session invalid — fall through to anon.
   }
 
   const { sessionId, shouldSetCookie } = await getOrCreateSessionId();

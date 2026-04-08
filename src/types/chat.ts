@@ -51,5 +51,7 @@ export type MessagesResponse = {
 export type UploadResponse = {
   data: {
     attachments: Array<ChatAttachment>;
+    /** Present when the server created or bound uploads to a different chat (e.g. Postgres path). */
+    chatId?: string;
   };
 };

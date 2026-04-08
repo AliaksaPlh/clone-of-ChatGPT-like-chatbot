@@ -58,7 +58,7 @@ export const AuthSessionBlock = ({ session }: AuthSessionBlockProps) => {
 
   const promptLine =
     session && !session.isAnonymous
-      ? "Unlimited prompts for your signed-in app session."
+      ? "Unlimited prompts for authorized users only."
       : session
         ? `${session.usedFreePrompts} of 3 free prompts used.`
         : "3 free prompts available.";
@@ -132,12 +132,7 @@ export const AuthSessionBlock = ({ session }: AuthSessionBlockProps) => {
         </Link>
       }
       className="border-amber-400/20 bg-amber-400/10 text-amber-100"
-      description={
-        <span className="text-amber-50/70">
-          {promptLine} Sign in with Supabase to use a stable account on this
-          device.
-        </span>
-      }
+      description={<span className="text-amber-50/70">{promptLine}</span>}
       icon={<Lock className="size-4" />}
       title="Anonymous access"
     />
